@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
+import static java.lang.System.currentTimeMillis;
 import static java.lang.System.exit;
 
 public class Main {
     public static void main(String[] args) {
-
         System.out.println("Welcome to the Game!!!");
         System.out.println("You have 3 change to start the game.");
         System.out.println("To start the game type (s) and to quit type (q) : ");
@@ -67,12 +67,18 @@ public class Main {
         }
         System.out.println("Game floor looks like : ");
         boolean playersTurn = true;
-
+        int movesTillNow = 0;
         while (totalState > 0) {
-
+            movesTillNow += 1;
             printCurrentState(gamePosition);
 
-            String winner = checkForWinner(gamePosition);
+            String winner = null;
+            //check for winner: in happy case total moves would be
+            //n==3 => n*n = 9 => (n+(n-1)) => (3+2)
+            int checkWinnerAfterMoves = dimension+(dimension-1);
+            if(movesTillNow >= checkWinnerAfterMoves) {
+                winner = checkForWinner(gamePosition);
+            }
             if (Objects.nonNull(winner)) return winner;
 
             System.out.println(playersTurn ? "Player A to play " : "Player B to play " + ": enter position : ");
