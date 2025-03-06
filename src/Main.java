@@ -60,6 +60,7 @@ public class Main {
     private static String startGame(int dimension) {
         Scanner sc = new Scanner(System.in);
         int totalState = dimension * dimension;
+        int totalStatesPresent = totalState;
         String[][] gamePosition = new String[dimension][dimension];
         for (int row = 0; row < dimension; row++) {
             Arrays.fill(gamePosition[row], "-");
@@ -82,7 +83,7 @@ public class Main {
             if (status == -1) {
                 System.out.println("already that position is filled please check the game status\n and place provide the untouched position");
             } else if (status == 0) {
-                System.out.println("position is not correct choose between 1 To " + totalState);
+                System.out.println("position is not correct choose between 1 To " + totalStatesPresent);
             } else {
                 playersTurn = !playersTurn;
                 totalState -= 1;
