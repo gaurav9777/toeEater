@@ -73,11 +73,11 @@ public class Main {
             String winner = null;
             int movesTillNow = dimension * dimension - totalState;
             if (movesTillNow >= checkWinnerAfterMoves) {
-                winner = checkForWinner(gamePosition,coOrdinatePosition - 1,dimension);
+                winner = checkForWinner(gamePosition, coOrdinatePosition - 1, dimension);
             }
             if (Objects.nonNull(winner)) return winner;
             System.out.println(playersTurn ? "Player A to play " : "Player B to play " + ": enter position : ");
-             coOrdinatePosition = sc.nextInt();
+            coOrdinatePosition = sc.nextInt();
             int status = placeAtPosition(gamePosition, coOrdinatePosition - 1, dimension, playersTurn);
 
             if (status == -1) {
@@ -122,13 +122,13 @@ public class Main {
         }
     }
 
-    private static String checkForWinner(String[][] gamePosition,int coOrdinatePosition, int dimension) {
+    private static String checkForWinner(String[][] gamePosition, int coOrdinatePosition, int dimension) {
         int rowPosition = (coOrdinatePosition / dimension);
         int colPosition = (coOrdinatePosition % dimension);
 
-        int xCountRow = 0 , xCountCol = 0 ,oCountCol = 0 , oCountRow = 0;
+        int xCountRow = 0, xCountCol = 0, oCountCol = 0, oCountRow = 0;
 
-        for (int i = 0 ; i < dimension ; i++ ) {
+        for (int i = 0; i < dimension; i++) {
             if (gamePosition[rowPosition][i].equals("X")) {
                 xCountRow++;
             } else if (gamePosition[rowPosition][i].equals("O")) {
@@ -157,7 +157,7 @@ public class Main {
         boolean shouldCheckMinorDiagonal = (rowPosition + colPosition) == dimension - 1;
         boolean checkBothDiagonal = shouldCheckMajorDiagonal & shouldCheckMinorDiagonal;
 
-        if(shouldCheckMajorDiagonal || checkBothDiagonal){
+        if (shouldCheckMajorDiagonal || checkBothDiagonal) {
             for (int i = 0; i < dimension; i++) {
                 if (gamePosition[i][i].equals("X")) {
                     xCountRow++;
@@ -167,7 +167,7 @@ public class Main {
             }
         }
 
-        if(shouldCheckMinorDiagonal || checkBothDiagonal){
+        if (shouldCheckMinorDiagonal || checkBothDiagonal) {
             for (int i = 0; i < dimension; i++) {
                 if (gamePosition[dimension - 1 - i][i].equals("X")) {
                     xCountCol++;
