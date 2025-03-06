@@ -75,7 +75,7 @@ public class Main {
             String winner = null;
             //check for winner: in happy case total moves would be
             //n==3 => n*n = 9 => (n+(n-1)) => (3+2)
-            int checkWinnerAfterMoves = dimension+(dimension-1);
+            int checkWinnerAfterMoves = dimension+(dimension-1)-1;
             if(movesTillNow >= checkWinnerAfterMoves) {
                 winner = checkForWinner(gamePosition);
             }
