@@ -60,36 +60,30 @@ public class Main {
     private static String startGame(int dimension) {
         Scanner sc = new Scanner(System.in);
         int totalState = dimension * dimension;
-        int totalStatesPresent = totalState;
         String[][] gamePosition = new String[dimension][dimension];
         for (int row = 0; row < dimension; row++) {
             Arrays.fill(gamePosition[row], "-");
         }
         System.out.println("Game floor looks like : ");
         boolean playersTurn = true;
-        int movesTillNow = 0;
+        int coOrdinatePosition = 0;
+        int checkWinnerAfterMoves = dimension + (dimension - 1) - 1;
         while (totalState > 0) {
-            movesTillNow += 1;
             printCurrentState(gamePosition);
-
             String winner = null;
-            //check for winner: in happy case total moves would be
-            //n==3 => n*n = 9 => (n+(n-1)) => (3+2)
-            int checkWinnerAfterMoves = dimension + (dimension - 1) - 1;
+            int movesTillNow = dimension * dimension - totalState;
             if (movesTillNow >= checkWinnerAfterMoves) {
-                winner = checkForWinner(gamePosition);
+                winner = checkForWinner(gamePosition,coOrdinatePosition - 1,dimension);
             }
             if (Objects.nonNull(winner)) return winner;
-
             System.out.println(playersTurn ? "Player A to play " : "Player B to play " + ": enter position : ");
-
-            int coOrdinatePosition = sc.nextInt();
+             coOrdinatePosition = sc.nextInt();
             int status = placeAtPosition(gamePosition, coOrdinatePosition - 1, dimension, playersTurn);
 
             if (status == -1) {
                 System.out.println("already that position is filled please check the game status\n and place provide the untouched position");
             } else if (status == 0) {
-                System.out.println("position is not correct choose between 1 To " + totalStatesPresent);
+                System.out.println("position is not correct choose between 1 To " + dimension * dimension);
             } else {
                 playersTurn = !playersTurn;
                 totalState -= 1;
@@ -128,86 +122,64 @@ public class Main {
         }
     }
 
-    private static String checkForWinner(String[][] gamePosition) {
+    private static String checkForWinner(String[][] gamePosition,int coOrdinatePosition, int dimension) {
+        int rowPosition = (coOrdinatePosition / dimension);
+        int colPosition = (coOrdinatePosition % dimension);
 
+        int xCountRow = 0 , xCountCol = 0 ,oCountCol = 0 , oCountRow = 0;
 
-        //check for row wise winner
-        for (String[] strings : gamePosition) {
-            int xCount = 0;
-            int oCount = 0;
-            for (int col = 0; col < gamePosition[0].length; col++) {
-                if (strings[col].equals("X")) {
-                    xCount++;
-                } else if (strings[col].equals("O")) {
-                    oCount++;
-                }
+        for (int i = 0 ; i < dimension ; i++ ) {
+            if (gamePosition[rowPosition][i].equals("X")) {
+                xCountRow++;
+            } else if (gamePosition[rowPosition][i].equals("O")) {
+                oCountRow++;
             }
-            if (xCount == gamePosition.length) {
-                return "A";
-            } else if (oCount == gamePosition.length) {
-                return "B";
+            if (gamePosition[i][colPosition].equals("X")) {
+                xCountCol++;
+            } else if (gamePosition[i][colPosition].equals("O")) {
+                oCountCol++;
             }
         }
 
-        //check for col wise winner
-        for (int col = 0; col < gamePosition[0].length; col++) {
-            int xCount = 0;
-            int oCount = 0;
-            for (int row = 0; row < gamePosition.length; row++) {
-                if (gamePosition[row][col].equals("X")) {
-                    xCount++;
-                } else if (gamePosition[row][col].equals("O")) {
-                    oCount++;
-                }
-            }
-            if (xCount == gamePosition.length) {
-                return "A";
-            } else if (oCount == gamePosition.length) {
-                return "B";
-            }
-        }
-
-        int xCount = 0;
-        int oCount = 0;
-
-        //check for positive diagonal winner
-
-        for (int col = 0; col < gamePosition[0].length; col++) {
-            for (int row = 0; row < gamePosition.length; row++) {
-                if (row == col) {
-                    if (gamePosition[col][row].equals("X")) {
-                        xCount++;
-                    } else if (gamePosition[col][row].equals("O")) {
-                        oCount++;
-                    }
-                }
-            }
-        }
-
-        if (xCount == gamePosition.length) {
+        if (xCountRow == dimension || xCountCol == dimension) {
             return "A";
-        } else if (oCount == gamePosition.length) {
+        } else if (oCountRow == dimension || oCountCol == dimension) {
             return "B";
         }
 
-        // check for reverse diagonal winner
-        xCount = 0;
-        oCount = 0;
-        for (int col = 0; col < gamePosition[0].length; col++) {
-            for (int row = 0; row < gamePosition.length; row++) {
-                if ((row + col + 1) == gamePosition.length) {
-                    if (gamePosition[col][row].equals("X")) {
-                        xCount++;
-                    } else if (gamePosition[col][row].equals("O")) {
-                        oCount++;
-                    }
+
+        xCountRow = 0;
+        xCountCol = 0;
+        oCountCol = 0;
+        oCountRow = 0;
+
+        boolean shouldCheckMajorDiagonal = (rowPosition == colPosition);
+        boolean shouldCheckMinorDiagonal = (rowPosition + colPosition) == dimension - 1;
+        boolean checkBothDiagonal = shouldCheckMajorDiagonal & shouldCheckMinorDiagonal;
+
+        if(shouldCheckMajorDiagonal || checkBothDiagonal){
+            for (int i = 0; i < dimension; i++) {
+                if (gamePosition[i][i].equals("X")) {
+                    xCountRow++;
+                } else if (gamePosition[i][i].equals("O")) {
+                    oCountRow++;
                 }
             }
         }
 
-        if (xCount == gamePosition.length) {
+        if(shouldCheckMinorDiagonal || checkBothDiagonal){
+            for (int i = 0; i < dimension; i++) {
+                if (gamePosition[dimension - 1 - i][i].equals("X")) {
+                    xCountCol++;
+                } else if (gamePosition[dimension - 1 - i][i].equals("O")) {
+                    oCountCol++;
+                }
+            }
+        }
+
+        if (xCountRow == dimension || xCountCol == dimension) {
             return "A";
-        } else if (oCount == gamePosition.length) {
+        } else if (oCountRow == dimension || oCountCol == dimension) {
             return "B";
         }
 
