@@ -155,9 +155,8 @@ public class Main {
 
         boolean shouldCheckMajorDiagonal = (rowPosition == colPosition);
         boolean shouldCheckMinorDiagonal = (rowPosition + colPosition) == dimension - 1;
-        boolean checkBothDiagonal = shouldCheckMajorDiagonal & shouldCheckMinorDiagonal;
 
-        if (shouldCheckMajorDiagonal || checkBothDiagonal) {
+        if (shouldCheckMajorDiagonal) {
             for (int i = 0; i < dimension; i++) {
                 if (gamePosition[i][i].equals("X")) {
                     xCountRow++;
@@ -167,7 +166,7 @@ public class Main {
             }
         }
 
-        if (shouldCheckMinorDiagonal || checkBothDiagonal) {
+        if (shouldCheckMinorDiagonal) {
             for (int i = 0; i < dimension; i++) {
                 if (gamePosition[dimension - 1 - i][i].equals("X")) {
                     xCountCol++;
