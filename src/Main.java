@@ -1,10 +1,14 @@
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 
+import Utils.GameUtils;
+import bots.EasyBot;
+
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
+import static Utils.GameUtils.isStringEmptyAndBlank;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.exit;
 
@@ -59,6 +63,13 @@ public class Main {
 
     private static String startGame(int dimension) {
         Scanner sc = new Scanner(System.in);
+        System.out.println("Lord ship who you want to challenge a mere human or machine : type 'H' for human or machine type 'M' for machine");
+        String challenger = sc.next();
+        String machineName = null;
+        if (challenger.equalsIgnoreCase("M")) {
+            System.out.println("you will be playing against Cyberdyne Bot T-800");
+            machineName = "Cyberdyne";
+        }
         int totalState = dimension * dimension;
         String[][] gamePosition = new String[dimension][dimension];
         for (int row = 0; row < dimension; row++) {
@@ -68,22 +79,46 @@ public class Main {
         boolean playersTurn = true;
         int coOrdinatePosition = 0;
         int checkWinnerAfterMoves = dimension + (dimension - 1) - 1;
+        String winner = "Both Lost";
         while (totalState > 0) {
             printCurrentState(gamePosition);
-            String winner = null;
+
             int movesTillNow = dimension * dimension - totalState;
             if (movesTillNow >= checkWinnerAfterMoves) {
                 winner = checkForWinner(gamePosition, coOrdinatePosition - 1, dimension);
             }
-            if (Objects.nonNull(winner)) return winner;
-            System.out.println(playersTurn ? "Player A to play " : "Player B to play " + ": enter position : ");
-            coOrdinatePosition = sc.nextInt();
-            int status = placeAtPosition(gamePosition, coOrdinatePosition - 1, dimension, playersTurn);
 
+            System.out.println(playersTurn ? "Player A to play " :
+                    "" + (isStringEmptyAndBlank(machineName) ? "Player B to play enter position :" : "Machine "+machineName+" played ") + " ");
+            int status = Integer.MIN_VALUE;
+            if (isStringEmptyAndBlank(machineName)) {
+                coOrdinatePosition = sc.nextInt();
+                status = placeAtPosition(gamePosition, coOrdinatePosition - 1, dimension, playersTurn);
+                if (movesTillNow >= checkWinnerAfterMoves) {
+                    winner = checkForWinner(gamePosition, coOrdinatePosition - 1, dimension);
+                }
+            } else {
+                if (!playersTurn) {
+                    status = EasyBot.placeAtPosition(gamePosition, coOrdinatePosition - 1, dimension, playersTurn);
+                    if (movesTillNow >= checkWinnerAfterMoves) {
+                        winner = checkForWinner(gamePosition, coOrdinatePosition - 1, dimension);
+                    }
+                }else{
+                    coOrdinatePosition = sc.nextInt();
+                    status = placeAtPosition(gamePosition, coOrdinatePosition - 1, dimension, playersTurn);
+                    if (movesTillNow >= checkWinnerAfterMoves) {
+                        winner = checkForWinner(gamePosition, coOrdinatePosition - 1, dimension);
+                    }
+                }
+            }
             if (status == -1) {
                 System.out.println("already that position is filled please check the game status\n and place provide the untouched position");
             } else if (status == 0) {
-                System.out.println("position is not correct choose between 1 To " + dimension * dimension);
+                if(isStringEmptyAndBlank(machineName)){
+                    System.out.println("Machine was not able to play the move,terminator got terminated.");
+                }else{
+                    System.out.println("position is not correct choose between 1 To " + dimension * dimension);
+                }
             } else {
                 playersTurn = !playersTurn;
                 totalState -= 1;
@@ -92,7 +127,7 @@ public class Main {
 
         printCurrentState(gamePosition);
 
-        return "Both Lost";
+        return winner;
     }
 
     private static int placeAtPosition(String[][] gamePosition, int coOrdinatePosition, int dimension, boolean playerAToPlay) {
